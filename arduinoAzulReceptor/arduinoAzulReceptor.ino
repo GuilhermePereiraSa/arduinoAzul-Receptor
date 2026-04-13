@@ -1,30 +1,33 @@
-#define PINO_CTS 9
-#define PINO_DADOS 10
-#define PINO_CLOCK 11
-#define PINO_RTS 12
+#define PINO_CTS 9 // indicar para o outro arduino que estamos prontos
+#define PINO_DADOS 10 // passagem dos dados, frame inteiro!
+#define PINO_CLOCK 11 // configurado no serial -> passado para aqui 
+#define PINO_RTS 12 // do outro arduino - entrada para este de recepção 
 
 // Receptor e Emissor tem mesma config de PINOS!
 
-// metodo de config
+// metodo de preconfig para tudo rodar direito
 void setup() {
-  // baud rate - preconfig - ser o mesmo do grupo de receptores
+  // baud rate arduino config
   Serial.begin(9600);
   
   // Configura os pinos
-  // so enviamos que estamos prontos! - unico de output aqui
   pinMode(PINO_RTS, INPUT);
   pinMode(PINO_CLOCK, INPUT);
   pinMode(PINO_DADOS, INPUT);
+
+  // so enviamos que estamos prontos! - unico de output aqui
   pinMode(PINO_CTS, OUTPUT);
 
 
+  // ja coloca o de recebimento como não-pronto
   digitalWrite(PINO_CTS, LOW); // Começa com CTS baixo - de acordo com o pdf
-  
 
   // O emissor, ele está pronto pra enviar?
   Serial.println("Receptor ligado. Aguardando sinal RTS do Emissor...");
 }
 
+
+// loop serve para receber os dados
 void loop() {
 
   // Fica lendo o pino RTS do emissor
@@ -38,11 +41,15 @@ void loop() {
     digitalWrite(PINO_CTS, HIGH);
     
 
-    // EM LOOP! - Ler todo o frame aqui!
-    // teste vamos só segurar enquanto o RTS estiver alto
-    while(digitalRead(PINO_RTS) == HIGH) {
-      // Não faz nada, só espera o emissor terminar (baixar o RTS)
-    }
+    // INTERROMPER PARA LER O BIT - ARDUINO É MAIS RAPIDO
+    // utilizar a funcao de Serial.ino
+
+
+    // so fazer um for para receber os bits?
+    // usar volatile 
+    // usar operadores logicos de bit - bit a bit, como o (& AND bitwise), ou o | (ou) 
+    // usar vector de booleans para os bits - 0 false, 1 true
+
 
     // Emissor baixou o RTS (terminou)
     Serial.println("Emissor finalizou. Baixando CTS...");
@@ -52,5 +59,7 @@ void loop() {
     Serial.println("-----------------------------------"); 
 
 
+  }else {
+    digitalWrite(PINO_CTS, LOW);
   }
 }
