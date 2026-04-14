@@ -3,6 +3,8 @@
 #define PINO_CLOCK 11 // configurado no serial -> passado para aqui 
 #define PINO_RTS 12 // do outro arduino - entrada para este de recepção 
 
+#include "Serial.h"
+
 // Receptor e Emissor tem mesma config de PINOS!
 
 // metodo de preconfig para tudo rodar direito
@@ -26,6 +28,56 @@ void setup() {
   Serial.println("Receptor ligado. Aguardando sinal RTS do Emissor...");
 }
 
+void lerChar() {
+  byte charRecebido = 0;
+
+  // Recebe o bit de start
+  while(digitalRead(PINO_CLOCK) == LOW); // Espera borda de subida do clock
+  int startBit = digitalRead(PINO_DADOS);
+  while(digitalRead(PINO_CLOCK) == HIGH); // Espera borda de descida do clock
+
+  // Verifica start
+  if(startBit != 0){
+    Serial.println("Erro: START inválido");
+    return;
+  }
+
+  // Lê os bits do char
+  for(int i = 0; i < 8; i++){
+    while(digitalRead(PINO_CLOCK) == LOW); // Espera borda de subida do clock
+
+    int bit = digitalRead(PINO_DADOS);
+    charRecebido |= (bit << i);
+
+    while(digitalRead(PINO_CLOCK) == HIGH); // Espera borda de descida do clock
+  }
+
+  // Lê o bit de paridade
+  while(digitalRead(PINO_CLOCK) == LOW); // Espera borda de subida do clock
+  bool paridadeRecebida = digitalRead(PINO_DADOS);
+  while(digitalRead(PINO_CLOCK) == HIGH); // Espera borda de descida do clock
+
+  // Lê o bit de stop
+  while(digitalRead(PINO_CLOCK) == LOW); // Espera borda de subida do clock
+  int stopBit = digitalRead(PINO_DADOS);
+  while(digitalRead(PINO_CLOCK) == HIGH); // Espera borda de descida do clock
+
+  // Verifica stop
+  if(stopBit != 0){
+    Serial.println("Erro: START inválido");
+    return;
+  }
+
+  // Verifica paridade
+  if(bitParidade(charRecebido) != paridadeRecebida){
+    Serial.println("Erro de paridade!");
+    return;
+  }
+
+  // Sucesso
+  Serial.print("Recebido: ");
+  Serial.println((char)charRecebido);
+}
 
 // loop serve para receber os dados
 void loop() {
@@ -49,7 +101,8 @@ void loop() {
     // usar volatile 
     // usar operadores logicos de bit - bit a bit, como o (& AND bitwise), ou o | (ou) 
     // usar vector de booleans para os bits - 0 false, 1 true
-
+    
+    lerChar(); // Criei essa função para auxiliar
 
     // Emissor baixou o RTS (terminou)
     Serial.println("Emissor finalizou. Baixando CTS...");
