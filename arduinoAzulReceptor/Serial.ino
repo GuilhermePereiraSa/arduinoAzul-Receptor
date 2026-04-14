@@ -20,7 +20,14 @@
 
 // Aqui o bit ja vem como char, de alguma forma ele ja foi montado
 bool bitParidade(char dado){
+    int count = 0;
 
+    while(dado > 0) {
+        count += dado & 1;   // Verifica se o último bit é 1
+        dado = dado >> 1;    // Desloca para a direita, eliminando o último bit de dado
+    }
+
+    return count % 2 == 0; // 0 par, 1 ímpar
 }
 
 // Rotina de interrupcao do timer1
