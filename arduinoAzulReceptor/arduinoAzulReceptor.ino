@@ -45,9 +45,20 @@ void loop() {
     // utilizar a funcao de Serial.ino
 
 
+
+    /*
+      Sempre que o clock fizer uma mudança - de subida de clock no caso
+
+      devemos ler os bits com o digitalRead PINO_DADOS para capturar 1 bit
+    */
+
     // so fazer um for para receber os bits?
     // usar volatile 
     // usar operadores logicos de bit - bit a bit, como o (& AND bitwise), ou o | (ou) 
+
+    /*
+      DICA da prof: bitWrite(x, n, b), escreve o bit b, na posicao n, na variavel x (char)
+    */
     // usar vector de booleans para os bits - 0 false, 1 true
 
 
@@ -59,6 +70,9 @@ void loop() {
     Serial.println("-----------------------------------"); 
 
 
+
+  // detectar quando o rts vai pra low 
+  // ai chama a funcao de paridade
   }else {
     digitalWrite(PINO_CTS, LOW);
   }
