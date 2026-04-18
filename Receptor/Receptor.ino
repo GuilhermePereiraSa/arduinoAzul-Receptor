@@ -59,7 +59,8 @@ void processaChar(){
   }
 
   // Sucesso
-  Serial.println("Recebido: ", (char)charAtual);
+  Serial.print("Recebido: ");
+  Serial.println((char)charAtual);
 }
 
 
@@ -70,7 +71,7 @@ void loop() {
 
   // Se o emissor pediu para enviar (RTS em HIGH)...
   // e se for high, fica preso aqui
-  if (estadoRTS == HIGH) {
+  if (estadoRTS == HIGH && !recebendoDado) {
     Serial.println("RTS Detectado!");
     
     // config tudo
