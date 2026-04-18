@@ -42,7 +42,10 @@ bool bitParidade(char dado){
         uData = uData >> 1;    // Desloca para a direita, eliminando o último bit de dado
     }
 
-    return count % 2 == 0; // 0 par, 1 ímpar
+    /* Bit de paridade 1 se quantidade de 1s no char é ímpar 
+       Bit de paridade 0 se quantidade de 1s no char par */
+       
+    return count % 2 != 0; // (false) par, (true) ímpar
 }
 
 
